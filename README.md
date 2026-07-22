@@ -32,13 +32,14 @@ A command-line C++ application that automatically organizes files into categoriz
 
 ## Project Structure
 
-
+```text
 file-organizer/
 ├── README.md
 ├── .gitignore
 ├── main.cpp
 ├── organizer.cpp
 └── organizer.h
+```
 
 ## Requirements
 
@@ -64,7 +65,7 @@ Run the program:
 Windows example:
 
 ```bash
-main "C:\Users\YourName\Downloads"
+.\main "C:\Users\YourName\Downloads"
 ```
 
 ## Example
