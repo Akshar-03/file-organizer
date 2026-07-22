@@ -6,16 +6,8 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-void FileOrganizer::organize(const string &folderpath)
+string FileOrganizer::getCategory(const string &extension)
 {
-    fs::path folder(folderpath); // fs::path folder= folderpath;
-
-    if (!fs::exists(folder)) // if path not exist, return.
-    {
-        cout << "Folder doesn't exist.\n";
-        return;
-    }
-
     unordered_map<string, string> categories =
         {
             {".jpg", "Images"},
@@ -30,6 +22,38 @@ void FileOrganizer::organize(const string &folderpath)
             {".mp4", "Videos"},
 
             {".zip", "Archives"}};
+
+    auto it = categories.find(extension);
+    return (it != categories.end()) ? it->second : "Others";
+}
+
+fs::path FileOrganizer::getFileName(const fs::path &destinationFolder, const fs::path &sourceFile)
+{
+    fs::path destinationFile = destinationFolder / sourceFile.filename();
+
+    int cnt = 1;
+
+    while (fs::exists(destinationFile))
+    {
+        string newName = sourceFile.stem().string() + " (" + to_string(cnt) + ")" + sourceFile.extension().string();
+
+        destinationFile = destinationFolder / newName;
+
+        cnt++;
+    }
+
+    return destinationFile;
+}
+
+void FileOrganizer::organize(const string &folderpath)
+{
+    fs::path folder(folderpath); // fs::path folder= folderpath;
+
+    if (!fs::exists(folder)) // if path not exist, return.
+    {
+        cout << "Folder doesn't exist.\n";
+        return;
+    }
 
     for (const auto &entry : fs::directory_iterator(folder)) // for every entry(file) inside the folder
     {
@@ -46,24 +70,14 @@ void FileOrganizer::organize(const string &folderpath)
         string extension = srcFile.extension().string();
 
         // find category
-        auto it = categories.find(extension);
-        string category = (it != categories.end()) ? it->second : "Others";
+        string category = getCategory(extension);
 
         // create destination folder
         fs::path destinationFolder = folder / category;
         fs::create_directories(destinationFolder);
 
         // create destination file path
-        fs::path destinationFile = destinationFolder / srcFile.filename();
-
-        // handle duplicates
-        int counter = 1;
-        while (fs::exists(destinationFile))
-        {
-            string newName = srcFile.stem().string() + " (" + to_string(counter) + ")" + srcFile.extension().string();
-            destinationFile = destinationFolder / newName;
-            counter++;
-        }
+        fs::path destinationFile = getFileName(destinationFolder, srcFile);
 
         // move files to respective categories
         try
