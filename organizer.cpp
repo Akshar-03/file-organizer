@@ -15,15 +15,55 @@ string FileOrganizer::getCategory(const string &extension)
             {".jpg", "Images"},
             {".jpeg", "Images"},
             {".png", "Images"},
+            {".gif", "Images"},
+            {".bmp", "Images"},
+            {".webp", "Images"},
+            {".svg", "Images"},
+            {".heic", "Images"},
+            {".ico", "Images"},
 
             {".pdf", "Documents"},
             {".txt", "Documents"},
+            {".doc", "Documents"},
+            {".docx", "Documents"},
+            {".ppt", "Documents"},
+            {".pptx", "Documents"},
+            {".xls", "Documents"},
+            {".xlsx", "Documents"},
+            {".csv", "Documents"},
 
             {".mp3", "Music"},
+            {".wav", "Music"},
+            {".aac", "Music"},
+            {".flac", "Music"},
+            {".ogg", "Music"},
+            {".m4a", "Music"},
 
             {".mp4", "Videos"},
+            {".mkv", "Videos"},
+            {".avi", "Videos"},
+            {".mov", "Videos"},
+            {".wmv", "Videos"},
+            {".webm", "Videos"},
 
-            {".zip", "Archives"}};
+            {".zip", "Archives"},
+            {".rar", "Archives"},
+            {".7z", "Archives"},
+            {".tar", "Archives"},
+            {".gz", "Archives"},
+
+            {".exe", "Programs"},
+            {".msi", "Programs"},
+
+            {".cpp", "Code"},
+            {".c", "Code"},
+            {".h", "Code"},
+            {".hpp", "Code"},
+            {".py", "Code"},
+            {".java", "Code"},
+            {".js", "Code"},
+            {".html", "Code"},
+            {".css", "Code"}};
 
     auto it = categories.find(extension);
     return (it != categories.end()) ? it->second : "Others";
@@ -47,11 +87,15 @@ fs::path FileOrganizer::getFileName(const fs::path &destinationFolder, const fs:
     return destinationFile;
 }
 
-string toLower(string str)
+string FileOrganizer::toLower(string str)
 {
     transform(str.begin(), str.end(), str.begin(), ::tolower);
     return str;
 }
+
+int moved = 0;
+int skipped = 0;
+int errors = 0;
 
 void FileOrganizer::organize(const string &folderpath)
 {
@@ -68,6 +112,7 @@ void FileOrganizer::organize(const string &folderpath)
         // skip if not regular file
         if (!entry.is_regular_file())
         {
+            skipped++;
             continue;
         }
 
@@ -91,12 +136,18 @@ void FileOrganizer::organize(const string &folderpath)
         try
         {
             fs::rename(srcFile, destinationFile);
-
             cout << "moved: " << srcFile.filename() << " -> " << category << '\n';
         }
         catch (const fs::filesystem_error &e)
         {
+            errors++;
             cout << "Error while moving " << srcFile.filename() << " : " << e.what() << '\n';
         }
+        moved++;
     }
+
+    cout << "Organization Complete\n";
+    cout << "Files moved   : " << moved << '\n';
+    cout << "Files skipped : " << skipped << '\n';
+    cout << "Errors        : " << errors << '\n';
 }
