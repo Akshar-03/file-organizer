@@ -2,6 +2,8 @@
 #include <iostream>
 #include <filesystem>
 #include <unordered_map>
+#include <algorithm>
+#include <cctype>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -45,6 +47,12 @@ fs::path FileOrganizer::getFileName(const fs::path &destinationFolder, const fs:
     return destinationFile;
 }
 
+string toLower(string str)
+{
+    transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
+
 void FileOrganizer::organize(const string &folderpath)
 {
     fs::path folder(folderpath); // fs::path folder= folderpath;
@@ -67,7 +75,7 @@ void FileOrganizer::organize(const string &folderpath)
         fs::path srcFile = entry.path();
 
         // get extension
-        string extension = srcFile.extension().string();
+        string extension = toLower(srcFile.extension().string());
 
         // find category
         string category = getCategory(extension);

@@ -11,6 +11,7 @@ public:
 private:
     string getCategory(const std::string &extension);
     fs::path getFileName(const fs::path &destinationFolder, const fs::path &sourceFile);
+    string toLower(string str);
 };
 
 #endif
