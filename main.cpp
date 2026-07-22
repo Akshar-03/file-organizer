@@ -2,15 +2,17 @@
 #include "organizer.h"
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
-    string folderpath;
-    cout << "Enter folder path: ";
-    getline(cin, folderpath);
+    if(argc!=2)
+    {
+        cout << "Usage: " << argv[0] << " <folder_path>\n";
+        return 1;
+    }
+    string folderPath = argv[1];
 
     FileOrganizer organizer;
-
-    organizer.organize(folderpath);
+    organizer.organize(folderPath);
 
     return 0;
 }
